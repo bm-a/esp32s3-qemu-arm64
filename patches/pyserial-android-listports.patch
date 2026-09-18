@@ -1,0 +1,11 @@
+--- a/lib/python3.14/site-packages/serial/tools/list_ports_posix.py
++++ b/lib/python3.14/site-packages/serial/tools/list_ports_posix.py
+@@ -26,7 +26,8 @@
+ # try to detect the OS so that a device can be selected...
+ plat = sys.platform.lower()
+
+-if plat[:5] == 'linux':    # Linux (confirmed)  # noqa
++# Android (Termux) reports sys.platform == 'android' but has the same
++# /dev/tty* layout as Linux, so reuse the Linux implementation.
++if plat[:5] == 'linux' or plat[:7] == 'android':  # noqa
+     from serial.tools.list_ports_linux import comports

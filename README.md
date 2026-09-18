@@ -1,5 +1,15 @@
 # ESP32-S3 QEMU on ARM64 — build, run, and flash-model fixes
 
+## Contents
+
+- `build-qemu-esp32s3.sh` — deps + clone + patch + build.
+- `run-qemu-esp32s3.sh` — merge flash image + boot any ESP32-S3 firmware, UART0 on TCP.
+- `patches/qemu-m25p80-rdid-sfdp-gd25q64.patch` — generic RDID 0x90/0xAB + GD25Q64
+  SFDP table for QEMU's M25P80 flash model.
+- `patches/pyserial-android-listports.patch` — one-line fix so pyserial (and
+  therefore PlatformIO) works on Termux/Android.
+- `LICENSE` (MIT).
+
 Run Espressif's QEMU ESP32-S3 machine on ARM64 Linux (servers, Raspberry Pi,
 phone proot distros) and boot real firmware in it. Includes two flash-model
 fixes without which Arduino-ESP32 guests cannot get past flash init.
