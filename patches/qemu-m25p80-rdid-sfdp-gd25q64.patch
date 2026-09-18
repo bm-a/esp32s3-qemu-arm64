@@ -1,5 +1,5 @@
 diff --git a/hw/block/m25p80.c b/hw/block/m25p80.c
-index 46dbe7c..c914e49 100644
+index 46dbe7c..fe56ba0 100644
 --- a/hw/block/m25p80.c
 +++ b/hw/block/m25p80.c
 @@ -208,7 +208,7 @@ static const FlashPartInfo known_devices[] = {
@@ -11,7 +11,15 @@ index 46dbe7c..c914e49 100644
  
      /* Intel/Numonyx -- xxxs33b */
      { INFO("160s33b",     0x898911,      0,  64 << 10,  32, 0) },
-@@ -873,10 +873,31 @@ static void complete_collecting_data(Flash *s)
+@@ -385,6 +385,7 @@ typedef enum {
+     READ_FSR = 0x70,
+     RDCR = 0x15,
+     RDSFDP = 0x5a,
++    SET_BURST_WITH_WRAP = 0x77,
+ 
+     READ = 0x03,
+     READ4 = 0x13,
+@@ -873,10 +874,31 @@ static void complete_collecting_data(Flash *s)
                  qemu_log_mask(LOG_GUEST_ERROR,
                                "M25P80: Invalid read id address\n");
              }
@@ -45,6 +53,18 @@ index 46dbe7c..c914e49 100644
          }
          break;
  
+@@ -1530,6 +1552,11 @@ static void decode_new_cmd(Flash *s, uint32_t value)
+             qemu_log_mask(LOG_GUEST_ERROR, "M25P80: Unknown cmd %x\n", value);
+         }
+         break;
++    case SET_BURST_WITH_WRAP:
++        /* Set Burst with Wrap: wrap-length config has no effect on the
++         * single-line model, so accept and ignore (like real parts do
++         * when burst wrap is already disabled). */
++        break;
+     case RDSFDP:
+         if (s->pi->sfdp_read) {
+             s->needed_bytes = get_addr_length(s) + 1; /* SFDP addr + dummy */
 diff --git a/hw/block/m25p80_sfdp.c b/hw/block/m25p80_sfdp.c
 index a03a291..8319571 100644
 --- a/hw/block/m25p80_sfdp.c
