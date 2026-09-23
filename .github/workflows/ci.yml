@@ -1,0 +1,11 @@
+name: ci
+on: [push, pull_request]
+jobs:
+  shell:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: bash -n build-qemu-esp32s3.sh && bash -n run-qemu-esp32s3.sh
+      - uses: koalaman/shellcheck@v0.10.0
+        with:
+          check-sourced: true
